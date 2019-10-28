@@ -1,0 +1,106 @@
+
+HOME=/opt/coremedia
+
+drwxr-xr-x. 7 content-management-server coremedia 276 28. Okt 13:17 content-management-server
+
+
+
+content-management-server
+├── apache-tomcat-7.0.94
+│   ├── bin
+
+│   ├── webapps
+│   │   └── coremedia
+│   │       ├── META-INF
+│   │       │   ├── context.xml
+│   │       │   └── MANIFEST.MF
+│   │       └── WEB-INF
+│   │           ├── application.properties
+│   │           ├── classes
+│   │           ├── config
+│   │           │   └── contentserver
+│   │           │       ├── doctypes
+│   │           │       │   └── sample-doctypes.xml
+│   │           │       └── spring
+│   │           │           └── blobstore
+│   │           │               ├── blobstore-example.xml
+│   │           │               └── blobstore.properties
+│   │           ├── lib
+
+│   │           ├── properties
+│   │           │   └── corem
+│   │           │       ├── contentserver.properties
+│   │           │       ├── imageconverter.properties
+│   │           │       ├── jaas.conf
+│   │           │       ├── jndi-ad.properties
+│   │           │       ├── jndi.properties
+│   │           │       ├── mime.properties
+│   │           │       ├── publisher.properties
+│   │           │       ├── sample-loginbouncer.xml
+│   │           │       └── sql.properties
+│   │           └── var
+│   │               └── tmp
+│   └── work
+│       └── Catalina
+│           └── localhost
+│               └── coremedia
+├── apache-tomcat.pid
+├── common-lib
+│   └── coremedia-tomcat.jar
+├── content-management-server.properties
+├── current -> /opt/coremedia/content-management-server/apache-tomcat-7.0.94
+├── jaas.conf
+├── jmxremote.access
+├── jmxremote.password
+├── logback.xml
+├── server-lib
+├── service-hooks
+└── webapps
+    ├── content-management-server
+    │   ├── META-INF
+    │   │   ├── context.xml
+    │   │   └── MANIFEST.MF
+    │   └── WEB-INF
+    │       ├── application.properties
+    │       ├── classes
+    │       ├── config
+    │       │   └── contentserver
+    │       │       ├── doctypes
+    │       │       │   └── sample-doctypes.xml
+    │       │       └── spring
+    │       │           └── blobstore
+    │       │               ├── blobstore-example.xml
+    │       │               └── blobstore.properties
+    │       ├── lib
+
+    │       └── properties
+    │           └── corem
+    │               ├── contentserver.properties
+    │               ├── imageconverter.properties
+    │               ├── jaas.conf
+    │               ├── jndi-ad.properties
+    │               ├── jndi.properties
+    │               ├── mime.properties
+    │               ├── publisher.properties
+    │               ├── sample-loginbouncer.xml
+    │               └── sql.properties
+    └── content-management-server.war
+
+
+
+# ls -l content-management-server
+insgesamt 24
+drwxr-xr-x. 9 content-management-server coremedia  220 10. Apr 2019  apache-tomcat-7.0.94
+-rw-r--r--. 1 content-management-server coremedia    5 28. Okt 13:17 apache-tomcat.pid
+drwxr-xr-x. 2 content-management-server coremedia   34  7. Okt 13:49 common-lib
+-rw-r--r--. 1 content-management-server coremedia  830  7. Okt 13:49 content-management-server.properties
+lrwxrwxrwx. 1 root                      root        61  7. Okt 13:34 current -> /opt/coremedia/content-management-server/apache-tomcat-7.0.94
+-rwx------. 1 content-management-server coremedia  808  7. Okt 13:49 jaas.conf
+-r-x------. 1 content-management-server coremedia   35  7. Okt 13:34 jmxremote.access
+-r-x------. 1 content-management-server coremedia   31  7. Okt 13:34 jmxremote.password
+-rw-r--r--. 1 content-management-server coremedia 1119  7. Okt 13:49 logback.xml
+drwxr-xr-x. 2 content-management-server coremedia    6  7. Okt 13:49 server-lib
+drwxr-xr-x. 2 content-management-server coremedia    6  7. Okt 13:34 service-hooks
+drwxr-xr-x. 3 content-management-server coremedia   76  7. Okt 13:49 webapps
+
+

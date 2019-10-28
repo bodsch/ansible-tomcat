@@ -1,0 +1,30 @@
+---
+
+wait_for_ports:
+  # apache
+  - 80
+  - 443
+  # solr 6.5
+  - 39080
+  - 40080
+  # content-management-server
+  - 40180
+  # workflow-server
+  - 40380
+  # content-feeder
+  - 40480
+  # user-changes
+  - 40580
+  # elastic-worker
+  - 40680
+  # caefeeder-preview
+  - 40780
+  # cae-preview
+  - 40980
+  # sitemanager
+  - 41380
+  # studio
+  - 41080
+
+ior_cms: True
+ior_wfs: True
