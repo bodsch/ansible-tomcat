@@ -7,6 +7,8 @@ driver:
 
 lint:
   name: yamllint
+  options:
+    config-file: molecule/default/yaml-lint.yml
 
 platforms:
   - name: centos7
@@ -15,12 +17,12 @@ platforms:
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#   - name: fedora
-#     image: paulfantom/fedora-molecule:27
-#     docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
-#     privileged: true
-#     volumes:
-#       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: fedora
+    image: paulfantom/fedora-molecule:27
+    docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
 #   - name: bionic
 #     image: paulfantom/ubuntu-molecule:18.04
 #     docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
@@ -53,7 +55,7 @@ provisioner:
 scenario:
   name: default
   test_sequence:
-    # - lint
+    - lint
     - destroy
     - dependency
     - syntax

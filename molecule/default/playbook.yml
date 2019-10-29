@@ -4,4 +4,4 @@
   environment:
     NETRC: ''
   roles:
-    - ansible-coremedia-tomcat
+    - tomcat

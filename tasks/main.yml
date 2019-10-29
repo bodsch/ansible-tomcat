@@ -21,3 +21,13 @@
     dest: /tmp
   tags:
     - tomcat
+
+- name: propagate jar files
+  copy:
+    src: "{{ item.src }}"
+    dest: /tmp/
+    checksum: "{{ item.checksum }}"
+  with_items:
+    "{{ tomcat_files }}"
+  tags:
+    - tomcat

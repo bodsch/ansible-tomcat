@@ -6,3 +6,7 @@ tomcat_major_version: "{{ tomcat_version.split('.')[0] }}"
 
 # https://archive.apache.org/dist/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
 tomcat_download_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+
+tomcat_files:
+  - {src: 'catalina-jmx-remote.jar', checksum: 'a1fa949573888b982b42acf6d2e8470238ab6655'}
+  - {src: 'coremedia-tomcat.jar', checksum: 'accc2b68f38dced4a804d32a0c4939a84183fda2'}
