@@ -1,13 +1,5 @@
 ---
 
-- debug:
-    var: "{{ item }}"
-  when: item is defined
-  loop:
-    - tomcat_version
-    - tomcat_major_version
-    - tomcat_download_url
-
 - name: download tomcat binary to local folder
   become: false
   get_url:
@@ -23,24 +15,9 @@
   tags:
     - tomcat
 
-- name: Propagate tomcat archiv
+- name: propagate tomcat archiv
   copy:
     src: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
     dest: /tmp
-#    mode: 0755
-#    owner: root
-#    group: root
-#    remote_src: true
-  tags:
-    - tomcat
-
-- name: unpack tomcat binary
-#  become: false
-  unarchive:
-    src: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
-    dest: "/tmp"
-#    creates: "/tmp/apache-tomcat"
-#  delegate_to: localhost
-#  check_mode: false
   tags:
     - tomcat
