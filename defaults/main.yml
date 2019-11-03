@@ -10,3 +10,5 @@ tomcat_download_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_ma
 tomcat_files:
   - {src: 'catalina-jmx-remote.jar', checksum: 'a1fa949573888b982b42acf6d2e8470238ab6655'}
   - {src: 'coremedia-tomcat.jar', checksum: 'accc2b68f38dced4a804d32a0c4939a84183fda2'}
+
+tomcat_artefact_url: ''
