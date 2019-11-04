@@ -25,6 +25,7 @@
 - block:
 
   - name: download jar files
+    become: false
     get_url:
       url: "{{ tomcat_artefact_url }}/{{ item.src }}"
       dest: /tmp
