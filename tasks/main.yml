@@ -1,15 +1,30 @@
 ---
 
+- name: create deployment temporary directory
+  file:
+    path: "{{ deployment_tmp_directory }}"
+    state: directory
+    mode: 0750
+
+- name: create local temporary directory
+  become: false
+  file:
+    path: "{{ local_tmp_directory }}"
+    state: directory
+    mode: 0750
+  delegate_to: localhost
+
+
 - name: download tomcat binary to local folder
   become: false
   get_url:
     url: "{{ tomcat_download_url }}"
-    dest: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
+    dest: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
   register: _download_archive
   until: _download_archive is succeeded
   retries: 5
   delay: 2
-  run_once: true
+  # run_once: true
   delegate_to: localhost
   check_mode: false
   tags:
@@ -17,48 +32,48 @@
 
 - name: propagate tomcat archiv
   copy:
-    src: "/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz"
-    dest: /tmp
+    src: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+    dest: "{{ deployment_tmp_directory }}"
   tags:
     - tomcat
 
 - block:
 
-  - name: download jar files
-    become: false
-    get_url:
-      url: "{{ tomcat_artefact_url }}/{{ item.src }}"
-      dest: /tmp
-      checksum: "sha1:{{ item.checksum }}"
-    with_items:
-      "{{ tomcat_files }}"
-    register: _download_artefact
-    until: _download_artefact is succeeded
-    retries: 5
-    delay: 2
-    run_once: true
-    delegate_to: localhost
-    check_mode: false
-    tags:
-      - tomcat
+    - name: download jar files
+      become: false
+      get_url:
+        url: "{{ tomcat_artefact_url }}/{{ item.src }}"
+        dest: "{{ local_tmp_directory }}"
+        checksum: "sha1:{{ item.checksum }}"
+      with_items:
+        "{{ tomcat_files }}"
+      register: _download_artefact
+      until: _download_artefact is succeeded
+      retries: 5
+      delay: 2
+      # run_once: true
+      delegate_to: localhost
+      check_mode: false
+      tags:
+        - tomcat
 
-  - name: propagate jar files
-    copy:
-      src: "/tmp/{{ item.src }}"
-      dest: /tmp/
-    with_items:
-      "{{ tomcat_files }}"
-    tags:
-      - tomcat
-  when: tomcat_artefact_url is defined and tomcat_artefact_url != ''
+    - name: propagate jar files
+      copy:
+        src: "{{ local_tmp_directory }}/{{ item.src }}"
+        dest: "{{ deployment_tmp_directory }}"
+      with_items:
+        "{{ tomcat_files }}"
+      tags:
+        - tomcat
+  when: tomcat_artefact_url is defined and tomcat_artefact_url | length != 0
 
 - name: propagate jar files
   copy:
     src: "{{ item.src }}"
-    dest: /tmp/
+    dest: "{{ deployment_tmp_directory }}"
     checksum: "{{ item.checksum }}"
   with_items:
     "{{ tomcat_files }}"
-  when: tomcat_artefact_url is not defined or tomcat_artefact_url is defined and tomcat_artefact_url == ''
+  when: tomcat_artefact_url is not defined or tomcat_artefact_url is defined and tomcat_artefact_url | length == 0
   tags:
     - tomcat

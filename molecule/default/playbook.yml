@@ -4,4 +4,8 @@
   environment:
     NETRC: ''
   roles:
-    - tomcat
+    - role: tomcat
+      vars:
+        - artefact_server: http://127.0.0.1
+        - application_version: 1904.2
+        - tomcat_artefact_url: "{{ artefact_server }}/{{ application_version }}"
