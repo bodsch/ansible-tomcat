@@ -14,7 +14,6 @@
     mode: 0750
   delegate_to: localhost
 
-
 - name: download tomcat binary to local folder
   become: false
   get_url:
