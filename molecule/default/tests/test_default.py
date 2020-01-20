@@ -1,6 +1,5 @@
 import pytest
 import os
-import yaml
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
@@ -8,25 +7,35 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 @pytest.fixture()
-def AnsibleDefaults():
-    with open("../../defaults/main.yml", 'r') as stream:
-        return yaml.load(stream)
+def get_vars(host):
+    defaults_files = "file=../../defaults/main.yml name=role_defaults"
+    vars_files = "file=../../vars/main.yml name=role_vars"
+
+    ansible_vars = host.ansible(
+        "include_vars",
+        defaults_files)["ansible_facts"]["role_defaults"]
+
+    ansible_vars.update(host.ansible(
+        "include_vars",
+        vars_files)["ansible_facts"]["role_vars"])
+
+    print(ansible_vars)
+
+    return ansible_vars
 
 
-@pytest.mark.parametrize("dirs", [
-    "/tmp/deployment_artefacts"
-])
-def test_directories(host, dirs):
-    d = host.file(dirs)
-    assert d.is_directory
-    assert d.exists
+def test_tmp_directory(host, get_vars):
+    dir = host.file(get_vars['deployment_tmp_directory'])
+    assert dir.exists
+    assert dir.is_directory
 
 
 @pytest.mark.parametrize("files", [
-    "/tmp/deployment_artefacts/catalina-jmx-remote.jar",
-    "/tmp/deployment_artefacts/coremedia-tomcat.jar"
+    "catalina-jmx-remote.jar",
+    "coremedia-tomcat.jar",
 ])
-def test_files(host, files):
-    f = host.file(files)
+def test_files(host, get_vars, files):
+    dir = host.file(get_vars['deployment_tmp_directory'])
+    f = host.file("%s/%s" % (dir.linked_to, files))
     assert f.exists
     assert f.is_file

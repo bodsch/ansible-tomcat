@@ -14,31 +14,91 @@
     mode: 0750
   delegate_to: localhost
 
-- name: download tomcat binary to local folder
-  become: false
-  get_url:
-    url: "{{ tomcat_download_url }}"
-    dest: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
-  register: _download_archive
-  until: _download_archive is succeeded
-  retries: 5
-  delay: 2
-  # run_once: true
-  delegate_to: localhost
-  check_mode: false
-  tags:
-    - tomcat
+- block:
+    - name: "get checksum for tomcat-{{ tomcat_version }}"
+      get_url:
+        url: "{{ tomcat_download_url }}.sha512"
+        dest: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512"
+      register: _download_checksum
+      until: _download_checksum is succeeded
+      retries: 5
+      delay: 0
+      # run_once: true
+      delegate_to: localhost
+      check_mode: false
+      tags:
+        - tomcat
 
-- name: propagate tomcat archiv
-  copy:
-    src: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
-    dest: "{{ deployment_tmp_directory }}"
-  tags:
-    - tomcat
+    - name: download tomcat binary to local folder
+      become: false
+      get_url:
+        url: "{{ tomcat_download_url }}"
+        dest: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        checksum: 'sha512:{{ tomcat_checksums[0].split()[0] }}'
+      vars:
+        tomcat_checksums: '{{ lookup("file", "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512").splitlines() |
+          select("match", ".*apache-tomcat.*.tar.gz$") | list }}'
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 0
+      # run_once: true
+      delegate_to: localhost
+      check_mode: false
+      tags:
+        - tomcat
+
+    - name: propagate tomcat archiv
+      copy:
+        src: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        dest: "{{ deployment_tmp_directory }}"
+      tags:
+        - tomcat
+
+- block:
+    - name: "get checksum for catalina-jmx-remote.jar"
+      get_url:
+        url: "{{ tomcat_extra_jmx_url }}.sha512"
+        dest: "{{ local_tmp_directory }}/catalina-jmx-remote.jar.sha512"
+      register: _download_checksum
+      until: _download_checksum is succeeded
+      retries: 5
+      delay: 0
+      # run_once: true
+      delegate_to: localhost
+      check_mode: false
+      tags:
+        - tomcat
+
+    - name: download catalina-jmx-remote.jar to local folder
+      become: false
+      get_url:
+        url: "{{ tomcat_extra_jmx_url }}"
+        dest: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
+        checksum: "sha512:{{ catalina_jmx_checksums[0].split()[0] }}"
+      vars:
+        catalina_jmx_checksums: '{{ lookup("file", "{{ local_tmp_directory }}/catalina-jmx-remote.jar.sha512").splitlines() |
+          select("match", ".*catalina-jmx-remote.jar$") | list }}'
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 0
+      # run_once: true
+      delegate_to: localhost
+      check_mode: false
+      tags:
+        - tomcat
+
+    - name: propagate catalina-jmx-remote.jar
+      copy:
+        src: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
+        dest: "{{ deployment_tmp_directory }}"
+      tags:
+        - tomcat
 
 - block:
 
-    - name: download jar files
+    - name: download coremedia related jar files
       become: false
       get_url:
         url: "{{ tomcat_artefact_url }}/{{ item.src }}"
@@ -56,23 +116,14 @@
       tags:
         - tomcat
 
-    - name: propagate jar files
+    - name: propagate coremedia related jar files
       copy:
         src: "{{ local_tmp_directory }}/{{ item.src }}"
         dest: "{{ deployment_tmp_directory }}"
+        checksum: "{{ item.checksum }}"
       with_items:
         "{{ tomcat_files }}"
       tags:
         - tomcat
-  when: tomcat_artefact_url is defined and tomcat_artefact_url | length != 0
 
-- name: propagate jar files
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ deployment_tmp_directory }}"
-    checksum: "{{ item.checksum }}"
-  with_items:
-    "{{ tomcat_files }}"
-  when: tomcat_artefact_url is not defined or tomcat_artefact_url is defined and tomcat_artefact_url | length == 0
-  tags:
-    - tomcat
+  when: tomcat_artefact_url is defined and tomcat_artefact_url | length != 0

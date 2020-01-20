@@ -6,6 +6,6 @@
   roles:
     - role: tomcat
       vars:
-        - artefact_server: http://127.0.0.1
-        - application_version: 1904.2
+        - artefact_server: "{{ lookup('env', 'ARTEFACT_SERVER') | default('http://127.0.0.1', true) }}"
+        - application_version: "{{ lookup('env', 'APPLICATION_VERSION') | default('1904.2', true ) }}"
         - tomcat_artefact_url: "{{ artefact_server }}/{{ application_version }}"
