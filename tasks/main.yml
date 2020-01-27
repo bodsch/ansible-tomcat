@@ -16,6 +16,7 @@
 
 - block:
     - name: "get checksum for tomcat-{{ tomcat_version }}"
+      become: false
       get_url:
         url: "{{ tomcat_download_url }}.sha512"
         dest: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512"
@@ -57,6 +58,7 @@
 
 - block:
     - name: "get checksum for catalina-jmx-remote.jar"
+      become: false
       get_url:
         url: "{{ tomcat_extra_jmx_url }}.sha512"
         dest: "{{ local_tmp_directory }}/catalina-jmx-remote.jar.sha512"
