@@ -15,7 +15,7 @@
   delegate_to: localhost
 
 - block:
-    - name: "get checksum for tomcat-{{ tomcat_version }}"
+    - name: get checksum for tomcat-{{ tomcat_version }}
       become: false
       get_url:
         url: "{{ tomcat_download_url }}.sha512"
@@ -24,32 +24,52 @@
       until: _download_checksum is succeeded
       retries: 5
       delay: 0
-      # run_once: true
       delegate_to: localhost
       check_mode: false
       tags:
         - tomcat
+
+    - name: extract checksum
+      set_fact:
+        tomcat_checksum: "{{ tomcat_checksums[0].split()[0] }}"
+      vars:
+        tomcat_checksums: '{{ lookup("file", "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512").splitlines() |
+          select("match", ".*apache-tomcat.*.tar.gz$") | list }}'
+
+    - name: check for downloaded tomcat
+      become: false
+      stat:
+        path: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+      register: _downloaded_tomcat
+
+    - name: compute tomcat checksum
+      become: false
+      stat:
+        path: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        checksum_algorithm: sha512
+      delegate_to: localhost
+      register: _downloaded_tomcat_checksum
+      when: _downloaded_tomcat is defined and _downloaded_tomcat.stat.exists
 
     - name: download tomcat binary to local folder
       become: false
       get_url:
         url: "{{ tomcat_download_url }}"
         dest: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
-        checksum: 'sha512:{{ tomcat_checksums[0].split()[0] }}'
-      vars:
-        tomcat_checksums: '{{ lookup("file", "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512").splitlines() |
-          select("match", ".*apache-tomcat.*.tar.gz$") | list }}'
-      register: _download_archive
-      until: _download_archive is succeeded
+        checksum: 'sha512:{{ tomcat_checksum }}'
+      register: _download_artefact
+      until: _download_artefact is succeeded
       retries: 5
       delay: 0
-      # run_once: true
       delegate_to: localhost
       check_mode: false
       tags:
         - tomcat
+      when: (
+        (_downloaded_tomcat is defined and not _downloaded_tomcat.stat.exists) or
+        (tomcat_checksum != _downloaded_tomcat_checksum.stat.checksum) )
 
-    - name: propagate tomcat archiv
+    - name: deploy tomcat archiv
       copy:
         src: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
         dest: "{{ deployment_tmp_directory }}"
@@ -57,7 +77,7 @@
         - tomcat
 
 - block:
-    - name: "get checksum for catalina-jmx-remote.jar"
+    - name: get checksum for catalina-jmx-remote.jar
       become: false
       get_url:
         url: "{{ tomcat_extra_jmx_url }}.sha512"
@@ -66,26 +86,43 @@
       until: _download_checksum is succeeded
       retries: 5
       delay: 0
-      # run_once: true
       delegate_to: localhost
       check_mode: false
       tags:
         - tomcat
+
+    - name: extract checksum
+      set_fact:
+        catalina_jmx_checksum: "{{ catalina_jmx_checksums[0].split()[0] }}"
+      vars:
+        catalina_jmx_checksums: '{{ lookup("file", "{{ local_tmp_directory }}/catalina-jmx-remote.jar.sha512").splitlines() |
+          select("match", ".*catalina-jmx-remote.jar$") | list }}'
+
+    - name: check for downloaded catalina_jmx
+      become: false
+      stat:
+        path: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
+      register: _downloaded_catalina_jmx
+
+    - name: compute catalina_jmx checksum
+      become: false
+      stat:
+        path: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
+        checksum_algorithm: sha512
+      delegate_to: localhost
+      register: _downloaded_catalina_jmx_checksum
+      when: _downloaded_catalina_jmx is defined and _downloaded_catalina_jmx.stat.exists
 
     - name: download catalina-jmx-remote.jar to local folder
       become: false
       get_url:
         url: "{{ tomcat_extra_jmx_url }}"
         dest: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
-        checksum: "sha512:{{ catalina_jmx_checksums[0].split()[0] }}"
-      vars:
-        catalina_jmx_checksums: '{{ lookup("file", "{{ local_tmp_directory }}/catalina-jmx-remote.jar.sha512").splitlines() |
-          select("match", ".*catalina-jmx-remote.jar$") | list }}'
+        checksum: "sha512:{{ catalina_jmx_checksum }}"
       register: _download_archive
       until: _download_archive is succeeded
       retries: 5
       delay: 0
-      # run_once: true
       delegate_to: localhost
       check_mode: false
       tags:
@@ -103,16 +140,15 @@
     - name: download coremedia related jar files
       become: false
       get_url:
-        url: "{{ tomcat_artefact_url }}/{{ item.src }}"
+        url: "{{ tomcat_coremedia_artefact_url }}/{{ item.src }}"
         dest: "{{ local_tmp_directory }}"
         checksum: "sha1:{{ item.checksum }}"
       with_items:
-        "{{ tomcat_files }}"
+        "{{ tomcat_coremedia_files }}"
       register: _download_artefact
       until: _download_artefact is succeeded
       retries: 5
       delay: 2
-      # run_once: true
       delegate_to: localhost
       check_mode: false
       tags:
@@ -124,8 +160,9 @@
         dest: "{{ deployment_tmp_directory }}"
         checksum: "{{ item.checksum }}"
       with_items:
-        "{{ tomcat_files }}"
+        "{{ tomcat_coremedia_files }}"
       tags:
         - tomcat
 
-  when: tomcat_artefact_url is defined and tomcat_artefact_url | length != 0
+  when: ( tomcat_coremedia_files is defined and tomcat_coremedia_files | length > 0 and
+    tomcat_coremedia_artefact_url is defined and tomcat_coremedia_artefact_url | length != 0 )

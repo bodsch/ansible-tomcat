@@ -31,10 +31,11 @@ def test_tmp_directory(host, get_vars):
 
 
 @pytest.mark.parametrize("files", [
-    "catalina-jmx-remote.jar"
+    "catalina-jmx-remote.jar",
+    "coremedia-tomcat.jar",
 ])
 def test_files(host, get_vars, files):
-    dir = host.file( get_vars['deployment_tmp_directory'] )
-    f = host.file( "%s/%s" % (dir.linked_to, files) )
+    dir = host.file(get_vars['deployment_tmp_directory'])
+    f = host.file("%s/%s" % (dir.linked_to, files))
     assert f.exists
     assert f.is_file

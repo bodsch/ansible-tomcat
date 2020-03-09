@@ -1,6 +1,6 @@
 ---
 
-tomcat_version: '7.0.99'
+tomcat_version: 9.0.8
 
 tomcat_major_version: "{{ tomcat_version.split('.')[0] }}"
 
@@ -10,7 +10,9 @@ tomcat_download_dir: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_ma
 tomcat_download_url: "{{ tomcat_download_dir }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
 tomcat_extra_jmx_url: "{{ tomcat_download_dir }}/bin/extras/catalina-jmx-remote.jar"
 
-tomcat_files:
-  - { src: 'coremedia-tomcat.jar', checksum: 'accc2b68f38dced4a804d32a0c4939a84183fda2' }
-
-tomcat_artefact_url: "{{ artefact_server }}/{{ application_version }}"
+# only for coremedia related applications
+# not needed for spring-boot applications!
+# tomcat_coremedia_files:
+#   - { src: 'coremedia-tomcat.jar', checksum: 'accc2b68f38dced4a804d32a0c4939a84183fda2' }
+#
+# tomcat_coremedia_artefact_url: "{{ artefact_server }}/{{ application_version }}"

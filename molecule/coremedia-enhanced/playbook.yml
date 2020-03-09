@@ -1,0 +1,16 @@
+---
+- hosts: all
+  any_errors_fatal: false
+  environment:
+    NETRC: ''
+
+  vars:
+    - artefact_server: "{{ lookup('env', 'ARTEFACT_SERVER') | default('http://127.0.0.1', true) }}"
+    - application_version: "{{ lookup('env', 'APPLICATION_VERSION') | default('1904.2', true ) }}"
+
+    - tomcat_coremedia_artefact_url: "{{ artefact_server }}/{{ application_version }}"
+    - tomcat_coremedia_files:
+        - { src: 'coremedia-tomcat.jar', checksum: 'accc2b68f38dced4a804d32a0c4939a84183fda2' }
+
+  roles:
+    - role: tomcat
