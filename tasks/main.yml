@@ -14,7 +14,8 @@
     mode: 0750
   delegate_to: localhost
 
-- block:
+- name: download artefacts
+  block:
     - name: get checksum for tomcat-{{ tomcat_version }}
       become: false
       get_url:
@@ -76,7 +77,8 @@
       tags:
         - tomcat
 
-- block:
+- name: download extras for jmx remote
+  block:
     - name: get checksum for catalina-jmx-remote.jar
       become: false
       get_url:
@@ -134,6 +136,9 @@
         dest: "{{ deployment_tmp_directory }}"
       tags:
         - tomcat
+
+  when:
+    tomcat_major_version | int <= 9 and tomcat_patch_version | int <= 14
 
 - block:
 
