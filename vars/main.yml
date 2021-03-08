@@ -3,8 +3,8 @@
 tomcat_major_version: "{{ tomcat_version.split('.')[0] }}"
 tomcat_patch_version: "{{ tomcat_version.split('.')[2] }}"
 
-deployment_tmp_directory: /tmp/tomcat/{{ tomcat_version }}
-local_tmp_directory: /tmp/tomcat/{{ tomcat_version }}
+deployment_tmp_directory: /tmp/tomcat/{{ tomcat_major_version }}
+local_tmp_directory: /tmp/tomcat/{{ tomcat_major_version }}
 
 _systemd_lib_directory:
   default: /lib/systemd/system
