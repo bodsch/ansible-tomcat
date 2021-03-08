@@ -17,12 +17,12 @@
 - name: ensure group '{{ tomcat_user.group }}' exists
   group:
     name: "{{ tomcat_user.group }}"
-    gid: 998
+    gid: 668
 
 - name: ensure user '{{ tomcat_user.username }}' exists
   user:
     name: "{{ tomcat_user.username }}"
-    uid: 998
+    uid: 668
     comment: Tomcat Service User
     group: "{{ tomcat_user.group }}"
     shell: /bin/bash
