@@ -1,22 +1,27 @@
 ---
 
-dependencies: []
-
 galaxy_info:
+  role_name: tomcat
   author: Bodo Schulz <bodo@boone-schulz.de>
   description: role for download of a Tomcat needed for CoreMedia war deployment
-  company: ''
   license: "Apache"
-  min_ansible_version: 2.8
+  min_ansible_version: 2.9
   platforms:
+    - name: Ubuntu
+      versions:
+        # 18.04
+        - bionic
+        # 20.04
+        - focal
+    - name: Debian
+      versions:
+        # 9
+        - etch
+        # 10
+        - buster
     - name: EL
       versions:
         - 7
-    - name: Debian
-      versions:
-        - 9
-        - 10
-    - name: Ubuntu
-      versions:
-        - 16.04
-        - 18.04
+        - 8
+
+dependencies: []

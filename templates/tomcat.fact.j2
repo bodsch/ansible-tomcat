@@ -1,0 +1,12 @@
+#!/bin/bash
+# {{ ansible_managed }}
+cat <<EOF
+{
+  "version": {
+    "full": "{{ tomcat_version }}",
+    "major": "{{ tomcat_major_version }}",
+    "patch" : "{{ tomcat_patch_version }}",
+  },
+  "checksum": "{{ tomcat_checksum }}"
+}
+EOF

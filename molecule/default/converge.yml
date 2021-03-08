@@ -1,8 +1,12 @@
 ---
 - hosts: all
   any_errors_fatal: false
+
   environment:
     NETRC: ''
 
+  vars:
+    tomcat_version: 10.0.2
+
   roles:
-    - role: tomcat
+    - role: ansible-tomcat
