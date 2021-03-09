@@ -11,13 +11,11 @@ pp = pprint.PrettyPrinter()
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
-"""
-    get molecule directories
-"""
-
 
 def base_directory():
-    """ ... """
+    """
+        get molecule directories
+    """
     cwd = os.getcwd()
 
     if('group_vars' in os.listdir(cwd)):
@@ -30,17 +28,14 @@ def base_directory():
     return directory, molecule_directory
 
 
-"""
-    parse ansible variables
-    - defaults/main.yml
-    - vars/main.yml
-    - molecule/${MOLECULE_SCENARIO_NAME}/group_vars/all/vars.yml
-"""
-
-
 @pytest.fixture()
 def get_vars(host):
-    """ ... """
+    """
+      parse ansible variables
+      - defaults/main.yml
+      - vars/main.yml
+      - molecule/${MOLECULE_SCENARIO_NAME}/group_vars/all/vars.yml
+    """
     base_dir, molecule_dir = base_directory()
 
     file_defaults = "file={}/defaults/main.yml name=role_defaults".format(base_dir)
@@ -87,27 +82,34 @@ def test_tmp_directory(host, get_vars):
     assert dir.is_directory
 
 
-@pytest.mark.parametrize("files", [
-    "catalina-jmx-remote.jar"
-])
-def test_files(host, get_vars, files):
+def test_files(host, get_vars):
     """
       test jmx-remote.jar
     """
-    dir = host.file(get_vars.get('deployment_tmp_directory'))
-    f = host.file("{0}/{1}".format(dir.linked_to, files))
-    assert f.exists
-    assert f.is_file
+    facts = local_facts(host)
+
+    major_version = int(facts.get("version").get("major"))
+    patch_version = int(facts.get("version").get("patch"))
+
+    f = host.file(
+      "{0}/catalina-jmx-remote.jar".format(
+        get_vars.get('deployment_tmp_directory')))
+
+    if(major_version <= 9 and patch_version <= 14):
+        assert f.exists
+        assert f.is_file
+    else:
+        assert not f.exists
 
 
 def test_tomcat_version_link(host, get_vars):
     """
-
+      tomcat version
     """
-    version = get_vars.get('tomcat_version')
-    install_path = get_vars.get('tomcat_user').get('home_directory')
-
-    d = host.file("{0}/{1}".format(install_path, version))
+    d = host.file(
+      "{0}/{1}".format(
+        get_vars.get('tomcat_user').get('home_directory'),
+        get_vars.get('tomcat_version')))
 
     assert d.exists
     assert d.is_symlink
