@@ -92,8 +92,8 @@ def test_files(host, get_vars):
     patch_version = int(facts.get("version").get("patch"))
 
     f = host.file(
-      "{0}/catalina-jmx-remote.jar".format(
-        get_vars.get('deployment_tmp_directory')))
+        "{0}/catalina-jmx-remote.jar".format(
+            get_vars.get('deployment_tmp_directory')))
 
     if(major_version <= 9 and patch_version <= 14):
         assert f.exists
@@ -107,9 +107,9 @@ def test_tomcat_version_link(host, get_vars):
       tomcat version
     """
     d = host.file(
-      "{0}/{1}".format(
-        get_vars.get('tomcat_user').get('home_directory'),
-        get_vars.get('tomcat_version')))
+        "{0}/{1}".format(
+            get_vars.get('tomcat_user').get('home_directory'),
+            get_vars.get('tomcat_version')))
 
     assert d.exists
     assert d.is_symlink
