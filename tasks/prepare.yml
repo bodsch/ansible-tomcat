@@ -1,0 +1,29 @@
+---
+
+- name: create deployment temporary directory
+  file:
+    path: "{{ deployment_tmp_directory }}"
+    state: directory
+    mode: 0750
+
+- name: create local temporary directory
+  delegate_to: localhost
+  become: false
+  file:
+    path: "{{ local_tmp_directory }}"
+    state: directory
+    mode: 0750
+
+- name: ensure group '{{ tomcat_user.group }}' exists
+  group:
+    name: "{{ tomcat_user.group }}"
+    gid: 668
+
+- name: ensure user '{{ tomcat_user.username }}' exists
+  user:
+    name: "{{ tomcat_user.username }}"
+    uid: 668
+    comment: Tomcat Service User
+    group: "{{ tomcat_user.group }}"
+    shell: /bin/bash
+    home: "{{ tomcat_user.home_directory }}"

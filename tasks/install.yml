@@ -1,0 +1,44 @@
+---
+
+- name: check for unpacked tomcat
+  stat:
+    path: "{{ tomcat_user.home_directory }}/{{ tomcat_version }}/bin/catalina.sh"
+  register: _tomcat_unpack
+
+- name: unpack tomcat binary
+  unarchive:
+    src: "{{ deployment_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+    dest: "{{ tomcat_user.home_directory }}/"
+    group: "{{ tomcat_user.group }}"
+    mode: 0750
+    copy: false
+  when:
+    - _tomcat_unpack.stat is defined
+    - not _tomcat_unpack.stat.exists
+
+- name: create systemd template unit
+  template:
+    src: init/systemd/tomcat.service.j2
+    dest: "{{ systemd_lib_directory }}/tomcat@.service"
+    owner: root
+    group: root
+    mode: 0750
+
+- name: create systemd symlink
+  file:
+    src: "tomcat@.service"
+    dest: "{{ systemd_lib_directory }}/tomcat-{{ tomcat_major_version }}.service"
+    state: link
+
+- name: create symlink to {{ tomcat_user.home_directory }}/{{ tomcat_version }}
+  file:
+    src: '{{ tomcat_user.home_directory }}/apache-tomcat-{{ tomcat_version }}'
+    dest: '{{ tomcat_user.home_directory }}/{{ tomcat_version }}'
+    state: link
+    group: "{{ tomcat_user.group }}"
+
+- name: remove default webapps '{{ tomcat_user.home_directory }}/{{ tomcat_version }}/webapps/'
+  file:
+    name: "{{ tomcat_user.home_directory }}/{{ tomcat_version }}/webapps/{{ item }}"
+    state: absent
+  loop: "{{ tomcat_remove_webapps }}"
