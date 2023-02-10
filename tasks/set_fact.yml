@@ -1,7 +1,7 @@
 ---
 
 - name: make sure ansible local facts directory exists
-  file:
+  ansible.builtin.file:
     dest: /etc/ansible/facts.d
     state: directory
     owner: root
@@ -9,7 +9,7 @@
     mode: 0775
 
 - name: create custom fact file
-  template:
+  ansible.builtin.template:
     src: tomcat.fact.j2
     dest: /etc/ansible/facts.d/tomcat.fact
     owner: root
@@ -17,4 +17,4 @@
     mode: 0755
 
 - name: reload local facts
-  setup:
+  ansible.builtin.setup:

@@ -1,33 +1,65 @@
-# CoreMedia - tomcat
+
+# Ansible Role:  `tomcat`
 
 Download an Tomcat archive for a war based CoreMedia deployment.
 
 Also used for the jolokia monitoring Tool.
 
-## supported and tested distributions
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-tomcat/main.yml?branch=main)][ci]
+[![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-tomcat)][issues]
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-tomcat)][releases]
+[![Ansible Quality Score](https://img.shields.io/ansible/quality/50067?label=role%20quality)][quality]
 
-- CentOS 7 / 8
-- debian 9 / 10
-- ubuntu 18.04
+[ci]: https://github.com/bodsch/ansible-tomcat/actions
+[issues]: https://github.com/bodsch/ansible-tomcat/issues?q=is%3Aopen+is%3Aissue
+[releases]: https://github.com/bodsch/ansible-tomcat/releases
+[quality]: https://galaxy.ansible.com/bodsch/tomcat
 
-## config parameters
 
+
+## Operating systems
+
+Tested on
+
+* Arch Linux
+* Debian based
+    - Debian 10 / 11
+    - Ubuntu 20.10
+    
+
+## usage
+
+```yaml
+
+tomcat_version: 9.0.14
+
+tomcat_download_mirror: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}"
+
+tomcat_user:
+  username: tomcat
+  group: tomcat
+  home_directory: /opt/tomcat
+
+tomcat_remove_webapps:
+  - docs
+  - examples
+  - host-manager
+  - manager
+  - ROOT
+
+tomcat_service:
+  enabled: false
 ```
-tomcat_version: 9.0.8
 
-tomcat_major_version: "{{ tomcat_version.split('.')[0] }}"
 
-tomcat_download_dir: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}"
+----
 
-# https://archive.apache.org/dist/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
-tomcat_download_url: "{{ tomcat_download_dir }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
-tomcat_extra_jmx_url: "{{ tomcat_download_dir }}/bin/extras/catalina-jmx-remote.jar"
+## Author and License
 
-# only for coremedia related applications
-# not needed for spring-boot applications!
-tomcat_coremedia_files: {}
-# tomcat_coremedia_files:
-#   - { src: 'coremedia-tomcat.jar', checksum: 'accc2b68f38dced4a804d32a0c4939a84183fda2' }
-#
-# tomcat_coremedia_artefact_url: "{{ artefact_server }}/{{ application_version }}"
-```
+- Bodo Schulz
+
+## License
+
+[Apache](LICENSE)
+
+**FREE SOFTWARE, HELL YEAH!**

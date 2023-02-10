@@ -1,16 +1,16 @@
 ---
 
 - name: prepare system
-  include_tasks: prepare.yml
+  ansible.builtin.include_tasks: prepare.yml
 
 - name: download artefacts
-  include_tasks: download.yml
+  ansible.builtin.include_tasks: download.yml
 
 - name: install tomcat
-  include_tasks: install.yml
+  ansible.builtin.include_tasks: install.yml
 
 - name: set facts
-  include_tasks: set_fact.yml
+  ansible.builtin.include_tasks: set_fact.yml
 
 #- name: handle service
 #  include_tasks: service.yml

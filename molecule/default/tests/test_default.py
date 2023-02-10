@@ -18,7 +18,7 @@ def base_directory():
     """
     cwd = os.getcwd()
 
-    if('group_vars' in os.listdir(cwd)):
+    if ('group_vars' in os.listdir(cwd)):
         directory = "../.."
         molecule_directory = "."
     else:
@@ -95,7 +95,7 @@ def test_files(host, get_vars):
         "{0}/catalina-jmx-remote.jar".format(
             get_vars.get('deployment_tmp_directory')))
 
-    if(major_version <= 9 and patch_version <= 14):
+    if (major_version <= 9 and patch_version <= 14):
         assert f.exists
         assert f.is_file
     else:

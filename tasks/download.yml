@@ -4,9 +4,10 @@
   block:
     - name: get checksum for tomcat-{{ tomcat_version }}
       become: false
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ tomcat_download_url }}.sha512"
-        dest: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512"
+        dest: "{{ tomcat_local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512"
+        mode: 0640
       register: _download_checksum
       until: _download_checksum is succeeded
       retries: 5
@@ -17,22 +18,22 @@
         - tomcat
 
     - name: extract checksum
-      set_fact:
+      ansible.builtin.set_fact:
         tomcat_checksum: "{{ tomcat_checksums[0].split()[0] }}"
       vars:
-        tomcat_checksums: '{{ lookup("file", "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512").splitlines() |
+        tomcat_checksums: '{{ lookup("file", "{{ tomcat_local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz.sha512").splitlines() |
           select("match", ".*apache-tomcat.*.tar.gz$") | list }}'
 
     - name: check for downloaded tomcat
       become: false
-      stat:
-        path: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+      ansible.builtin.stat:
+        path: "{{ tomcat_local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
       register: _downloaded_tomcat
 
     - name: compute tomcat checksum
       become: false
-      stat:
-        path: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+      ansible.builtin.stat:
+        path: "{{ tomcat_local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
         checksum_algorithm: sha512
       delegate_to: localhost
       register: _downloaded_tomcat_checksum
@@ -42,10 +43,11 @@
 
     - name: download tomcat binary to local folder
       become: false
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ tomcat_download_url }}"
-        dest: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        dest: "{{ tomcat_local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
         checksum: 'sha512:{{ tomcat_checksum }}'
+        mode: 0640
       register: _download_artefact
       until: _download_artefact is succeeded
       retries: 5
@@ -60,20 +62,24 @@
         ( tomcat_checksum != _downloaded_tomcat_checksum.stat.checksum) )
 
     - name: deploy tomcat archiv
-      copy:
-        src: "{{ local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
+      ansible.builtin.copy:
+        src: "{{ tomcat_local_tmp_directory }}/apache-tomcat-{{ tomcat_version }}.tar.gz"
         dest: "{{ deployment_tmp_directory }}"
         mode: 0640
       tags:
         - tomcat
 
 - name: download extras for jmx remote
+  when:
+    - tomcat_major_version | int <= 9
+    - tomcat_patch_version | int <= 14
   block:
     - name: get checksum for catalina-jmx-remote.jar
       become: false
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ tomcat_extra_jmx_url }}.sha512"
-        dest: "{{ local_tmp_directory }}/catalina-jmx-remote.jar.sha512"
+        dest: "{{ tomcat_local_tmp_directory }}/catalina-jmx-remote.jar.sha512"
+        mode: 0640
       register: _download_checksum
       until: _download_checksum is succeeded
       retries: 5
@@ -84,22 +90,22 @@
         - tomcat
 
     - name: extract checksum
-      set_fact:
+      ansible.builtin.set_fact:
         catalina_jmx_checksum: "{{ catalina_jmx_checksums[0].split()[0] }}"
       vars:
-        catalina_jmx_checksums: '{{ lookup("file", "{{ local_tmp_directory }}/catalina-jmx-remote.jar.sha512").splitlines() |
+        catalina_jmx_checksums: '{{ lookup("file", "{{ tomcat_local_tmp_directory }}/catalina-jmx-remote.jar.sha512").splitlines() |
           select("match", ".*catalina-jmx-remote.jar$") | list }}'
 
     - name: check for downloaded catalina_jmx
       become: false
-      stat:
-        path: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
+      ansible.builtin.stat:
+        path: "{{ tomcat_local_tmp_directory }}/catalina-jmx-remote.jar"
       register: _downloaded_catalina_jmx
 
     - name: compute catalina_jmx checksum
       become: false
-      stat:
-        path: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
+      ansible.builtin.stat:
+        path: "{{ tomcat_local_tmp_directory }}/catalina-jmx-remote.jar"
         checksum_algorithm: sha512
       delegate_to: localhost
       register: _downloaded_catalina_jmx_checksum
@@ -109,10 +115,11 @@
 
     - name: download catalina-jmx-remote.jar to local folder
       become: false
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ tomcat_extra_jmx_url }}"
-        dest: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
+        dest: "{{ tomcat_local_tmp_directory }}/catalina-jmx-remote.jar"
         checksum: "sha512:{{ catalina_jmx_checksum }}"
+        mode: 0640
       register: _download_archive
       until: _download_archive is succeeded
       retries: 5
@@ -123,12 +130,9 @@
         - tomcat
 
     - name: propagate catalina-jmx-remote.jar
-      copy:
-        src: "{{ local_tmp_directory }}/catalina-jmx-remote.jar"
+      ansible.builtin.copy:
+        src: "{{ tomcat_local_tmp_directory }}/catalina-jmx-remote.jar"
         dest: "{{ deployment_tmp_directory }}"
         mode: 0640
       tags:
         - tomcat
-  when:
-    - tomcat_major_version | int <= 9
-    - tomcat_patch_version | int <= 14

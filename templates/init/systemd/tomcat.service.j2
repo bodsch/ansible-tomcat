@@ -1,16 +1,19 @@
+{{ ansible_managed | comment }}
 
 [Unit]
 
-Description = Tomcat unit for version %i
-After = multi-user.target
+Description     = Tomcat unit for version %i
+After           = multi-user.target
 
 [Service]
-Environment="HOME={{ tomcat_user.home_directory }}/%i"
-User      = {{ tomcat_user.username }}
-Group     = {{ tomcat_user.group }}
-Type      = forking
-ExecStart = {{ tomcat_user.home_directory }}/%i/bin/startup.sh
-ExecStop  = {{ tomcat_user.home_directory }}/%i/bin/shutdown.sh
+Type            = forking
+Environment     ="HOME={{ tomcat_user.home_directory }}/%i"
+
+User            = {{ tomcat_user.username }}
+Group           = {{ tomcat_user.group }}
+
+ExecStart       = {{ tomcat_user.home_directory }}/%i/bin/startup.sh
+ExecStop        = {{ tomcat_user.home_directory }}/%i/bin/shutdown.sh
 
 [Install]
-WantedBy = multi-user.target
+WantedBy        = multi-user.target

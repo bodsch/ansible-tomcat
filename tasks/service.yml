@@ -1,7 +1,7 @@
 ---
 
 - name: enable tomcat-{{ tomcat_version }} service
-  service:
+  ansible.builtin.service:
     name: tomcat{{ tomcat_version }}
     enabled: true
   when:
@@ -9,7 +9,7 @@
     - tomcat_service.enabled
 
 - name: "ensure tomcat-{{ tomcat_version }} service are {{ tomcat_service.state }}"
-  service:
+  ansible.builtin.service:
     name: "tomcat{{ tomcat_version }}.service"
     state: "{{ tomcat_service.state }}"
   when:
