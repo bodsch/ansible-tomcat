@@ -1,9 +1,11 @@
 ---
-- hosts: all
-  any_errors_fatal: false
 
-  environment:
-    NETRC: ''
+- name: converge
+  hosts: instance
+  any_errors_fatal: false
+  become: false
 
   roles:
     - role: ansible-tomcat
+
+...

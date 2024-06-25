@@ -6,19 +6,26 @@ galaxy_info:
 
   author: Bodo Schulz <bodo@boone-schulz.de>
 
-  description: role for download of a Tomcat needed for CoreMedia war deployment
+  description: Simple role for downloading a Tomcat
   license: "Apache"
 
   min_ansible_version: "2.9"
   platforms:
+    - name: ArchLinux
     - name: Debian
       versions:
         # 10
         - buster
         - bullseye
+        - bookworm
     - name: Ubuntu
       versions:
         # 20.04
         - focal
+
+  galaxy_tags:
+    - tomcat
+    - java
+    - applicationserver
 
 dependencies: []

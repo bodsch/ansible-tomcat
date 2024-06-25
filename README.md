@@ -8,12 +8,12 @@ Also used for the jolokia monitoring Tool.
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-tomcat/main.yml?branch=main)][ci]
 [![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-tomcat)][issues]
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-tomcat)][releases]
-[![Ansible Quality Score](https://img.shields.io/ansible/quality/50067?label=role%20quality)][quality]
+[![Ansible Downloads](https://img.shields.io/ansible/role/d/bodsch/tomcat?logo=ansible)][galaxy]
 
 [ci]: https://github.com/bodsch/ansible-tomcat/actions
 [issues]: https://github.com/bodsch/ansible-tomcat/issues?q=is%3Aopen+is%3Aissue
 [releases]: https://github.com/bodsch/ansible-tomcat/releases
-[quality]: https://galaxy.ansible.com/bodsch/tomcat
+[galaxy]: https://galaxy.ansible.com/ui/standalone/roles/bodsch/tomcat/
 
 
 
