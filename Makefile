@@ -1,9 +1,8 @@
 #
 export TOX_SCENARIO  ?= default
-# export TOX_PYTHON    ?= py310
 export TOX_ANSIBLE   ?= ansible_8.5
 
-.PHONY: converge destroy verify test lint
+.PHONY: converge destroy verify test lint gh-clean
 
 default: converge
 
@@ -21,3 +20,6 @@ test:
 
 lint:
 	@hooks/lint
+
+gh-clean:
+	@hooks/gh-clean
