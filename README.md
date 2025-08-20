@@ -5,7 +5,7 @@ Download an Tomcat archive for a war based CoreMedia deployment.
 
 Also used for the jolokia monitoring Tool.
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-tomcat/main.yml?branch=main)][ci]
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-tomcat/build.yml?branch=main)][ci]
 [![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-tomcat)][issues]
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-tomcat)][releases]
 [![Ansible Downloads](https://img.shields.io/ansible/role/d/bodsch/tomcat?logo=ansible)][galaxy]
